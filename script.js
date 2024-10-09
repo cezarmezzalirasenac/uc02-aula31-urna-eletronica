@@ -1,3 +1,84 @@
+const candidatos = [
+  {
+    nome: "Fulano Neto",
+    vicePrefeito: "Beltrano Junior",
+    cargo: "Prefeito",
+    foto: "perfil.jpg",
+    numeroPartido: 99,
+    votos: 0
+  },
+  {
+    nome: "João da Silva",
+    vicePrefeito: "José de Tal",
+    cargo: "Prefeito",
+    foto: "perfil.jpg",
+    numeroPartido: 77,
+    votos: 0
+  },
+  {
+    nome: "Ciclano de Tal",
+    vicePrefeito: "Deltano de Tal",
+    cargo: "Prefeito",
+    foto: "perfil.jpg",
+    numeroPartido: 10,
+    votos: 0
+  },
+  {
+    nome: "José Pleno",
+    cargo: "vereador",
+    foto: "perfil.jpg",
+    numeroPartido: 99099,
+    votos: 0
+  },
+  {
+    nome: "Capivara",
+    cargo: "vereador",
+    foto: "capivara.jpg",
+    numeroPartido: 77777,
+    votos: 0
+  },
+  {
+    nome: "Mega Mente",
+    cargo: "vereador",
+    foto: "megamente.jpg",
+    numeroPartido: 10157,
+    votos: 0
+  },
+  {
+    nome: "Quero Quero",
+    cargo: "vereador",
+    foto: "quero-quero.jpg",
+    numeroPartido: 99999,
+    votos: 0
+  }
+]
+
+const partidos = [
+  {
+    numero: 10,
+    nome: "Partido 10",
+    sigla: "P10",
+    votos: 0
+  },
+  {
+    numero: 77,
+    nome: "Partido 77",
+    sigla: "P77",
+    votos: 0
+  },
+  {
+    numero: 99,
+    nome: "Partido 99",
+    sigla: "P99",
+    votos: 0
+  }
+]
+
+const divDigits = document.getElementById("digits");
+
+const message = document.createElement("h2")
+message.setAttribute("id", "message")
+
 const boxDigit1 = document.getElementById("digit1");
 const boxDigit2 = document.getElementById("digit2");
 const boxDigit3 = document.getElementById("digit3");
@@ -15,9 +96,13 @@ const buttonNumber8 = document.getElementById("number8");
 const buttonNumber9 = document.getElementById("number9");
 const buttonNumber0 = document.getElementById("number0");
 
+const buttonCommandWhite = document.getElementById("command-white");
+const buttonCommandErase = document.getElementById("command-erase");
+const buttonCommandConfirm = document.getElementById("command-confirm");
+
 let posicaoAtual = 0
 let digitos = [undefined, undefined, undefined, undefined, undefined];
-
+let voto
 
 function atualizaDigitos() {
   console.log(digitos)
@@ -46,6 +131,7 @@ buttonNumber2.addEventListener("click", (event) => {
   event.preventDefault()
   buttonPressed(2)
 })
+
 buttonNumber3.addEventListener("click", (event) => {
   event.preventDefault()
   buttonPressed(3)
@@ -90,7 +176,45 @@ buttonNumber0.addEventListener("click", (event) => {
 
 
 // Se o comando for branco, todos os digitos ficam em branco
+// remover as divs dos digitos e mostrar o h1 da mensagem
+buttonCommandWhite.addEventListener("click", (event) => {
+  event.preventDefault()
+  if (voto === "branco") return
+
+  divDigits.removeChild(boxDigit1)
+  divDigits.removeChild(boxDigit2)
+  divDigits.removeChild(boxDigit3)
+  divDigits.removeChild(boxDigit4)
+  divDigits.removeChild(boxDigit5)
+
+  divDigits.setAttribute("class", "white-vote")
+  divDigits.appendChild(message)
+
+  message.textContent = "VOTO EM BRANCO"
+  voto = "branco"
+})
+
 // Se o comando for corrigir, apaga o digito atual
+buttonCommandErase.addEventListener("click", (event) => {
+  event.preventDefault()
+  // caso o voto esteja em branco, então só adiciona os campos dos digitos na tela novamente
+  if (voto === "branco") {
+    divDigits.removeAttribute("class", "white-vote")
+    divDigits.removeChild(message)
+    divDigits.appendChild(boxDigit1)
+    divDigits.appendChild(boxDigit2)
+    divDigits.appendChild(boxDigit3)
+    divDigits.appendChild(boxDigit4)
+    divDigits.appendChild(boxDigit5)
+    voto = undefined
+  }
+
+  for (let i = 0; i < 5; i++) {
+    digitos[i] = undefined
+  }
+  posicaoAtual = 0
+  atualizaDigitos()
+})
 // Se o comando for confirmar, faz as seguintes validações:
 // Se foram preenchidos todos os números, vai validar se o candidato é válido
 // Se o candidato é valido, vai mostrar a foto, o nome e o partido do candidato
