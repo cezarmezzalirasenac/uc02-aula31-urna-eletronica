@@ -50,7 +50,17 @@ const candidatos = [
     foto: "quero-quero.jpg",
     numero: 99999,
     votos: 0
-  }
+  },
+  {
+    nome: "Em branco",
+    numero: "branco",
+    votos: 0
+  },
+  {
+    nome: "Nulo",
+    numero: "nulo",
+    votos: 0
+  },
 ]
 
 const partidos = [
@@ -117,6 +127,13 @@ let posicaoAtual = 0
 let digitos = [undefined, undefined, undefined, undefined, undefined]
 let voto
 
+function limparDigitos() {
+  for (let i = 0; i < 5; i++) {
+    digitos[i] = undefined
+  }
+  posicaoAtual = 0
+}
+
 function atualizaDigitos() {
   console.log(digitos)
   console.log(posicaoAtual)
@@ -145,19 +162,33 @@ function limparCandidato() {
   divCandidate.removeChild(titleParty)
 }
 
+function mostrarDigitos() {
+  if (voto === "branco") {
+    divDigits.removeAttribute("class", "white-vote")
+    divDigits.removeChild(message)
+    divDigits.appendChild(boxDigit1)
+    divDigits.appendChild(boxDigit2)
+    divDigits.appendChild(boxDigit3)
+    divDigits.appendChild(boxDigit4)
+    divDigits.appendChild(boxDigit5)
+  }
+}
+
 function buttonDigitPressed(buttonNumber) {
   if (posicaoAtual >= 0 && posicaoAtual < 5) {
     digitos[posicaoAtual] = buttonNumber
     posicaoAtual += 1
     atualizaDigitos()
   }
-   // se a posicao atual for maior ou igual a 5 
+  // se a posicao atual for maior ou igual a 5 
   // vai procurar o candidato na lista de candidatos e mostrar seus dados
   if (posicaoAtual == 5) {
     const numeroDigitado = digitos.join("")
+    voto = numeroDigitado
     const candidatoExiste = candidatos.find((candidato) => candidato.numero == numeroDigitado)
     if (!candidatoExiste) return
     mostrarCandidato(candidatoExiste)
+
   }
 }
 
@@ -237,23 +268,14 @@ buttonCommandWhite.addEventListener("click", (event) => {
 buttonCommandErase.addEventListener("click", (event) => {
   event.preventDefault()
   // caso o voto esteja em branco, então só adiciona os campos dos digitos na tela novamente
-  if (voto === "branco") {
-    divDigits.removeAttribute("class", "white-vote")
-    divDigits.removeChild(message)
-    divDigits.appendChild(boxDigit1)
-    divDigits.appendChild(boxDigit2)
-    divDigits.appendChild(boxDigit3)
-    divDigits.appendChild(boxDigit4)
-    divDigits.appendChild(boxDigit5)
-    voto = undefined
+  mostrarDigitos()
+  console.log(voto)
+  if (voto !== "branco" && voto !== "nulo") {
+    limparCandidato()
   }
+  voto = undefined
 
-  limparCandidato()
-  
-  for (let i = 0; i < 5; i++) {
-    digitos[i] = undefined
-  }
-  posicaoAtual = 0
+  limparDigitos()
   atualizaDigitos()
 })
 // Se o comando for confirmar, faz as seguintes validações:
@@ -261,5 +283,28 @@ buttonCommandErase.addEventListener("click", (event) => {
 // Se o candidato é valido, vai mostrar a foto, o nome e o partido do candidato
 // Se o candidato não é valido, não mostra a foto, o nome e partido
 // Pressionando uma segunda vez o confirma, registra o voto
+
+buttonCommandConfirm.addEventListener("click", (event) => {
+  event.preventDefault()
+  if (!voto) return
+  console.log(typeof voto)
+  const posicaoCandidato = candidatos.findIndex((candidato) => String(candidato.numero) === voto)
+  const posicaoCandidatoNulo = candidatos.findIndex((candidato) => candidato.numero === "nulo")
+  if (posicaoCandidato === -1) {
+    candidatos[posicaoCandidatoNulo].votos += 1
+  } else {
+    candidatos[posicaoCandidato].votos += 1
+    if (voto !== "branco") {
+      limparCandidato()
+    } else {
+      mostrarDigitos()
+    }
+  }
+
+  voto = undefined
+  limparDigitos()
+  atualizaDigitos()
+  console.log(candidatos)
+})
 
 
