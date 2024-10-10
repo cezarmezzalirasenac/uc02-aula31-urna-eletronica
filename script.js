@@ -4,7 +4,7 @@ const candidatos = [
     vicePrefeito: "Beltrano Junior",
     cargo: "Prefeito",
     foto: "perfil.jpg",
-    numeroPartido: 99,
+    numero: 99,
     votos: 0
   },
   {
@@ -12,7 +12,7 @@ const candidatos = [
     vicePrefeito: "José de Tal",
     cargo: "Prefeito",
     foto: "perfil.jpg",
-    numeroPartido: 77,
+    numero: 77,
     votos: 0
   },
   {
@@ -20,35 +20,35 @@ const candidatos = [
     vicePrefeito: "Deltano de Tal",
     cargo: "Prefeito",
     foto: "perfil.jpg",
-    numeroPartido: 10,
+    numero: 10,
     votos: 0
   },
   {
     nome: "José Pleno",
     cargo: "vereador",
     foto: "perfil.jpg",
-    numeroPartido: 99099,
+    numero: 99099,
     votos: 0
   },
   {
     nome: "Capivara",
     cargo: "vereador",
     foto: "capivara.jpg",
-    numeroPartido: 77777,
+    numero: 77777,
     votos: 0
   },
   {
     nome: "Mega Mente",
     cargo: "vereador",
     foto: "megamente.jpg",
-    numeroPartido: 10157,
+    numero: 10157,
     votos: 0
   },
   {
     nome: "Quero Quero",
     cargo: "vereador",
     foto: "quero-quero.jpg",
-    numeroPartido: 99999,
+    numero: 99999,
     votos: 0
   }
 ]
@@ -74,34 +74,47 @@ const partidos = [
   }
 ]
 
-const divDigits = document.getElementById("digits");
+let candidatoValido = null
+
+const divDigits = document.getElementById("digits")
 
 const message = document.createElement("h2")
 message.setAttribute("id", "message")
 
-const boxDigit1 = document.getElementById("digit1");
-const boxDigit2 = document.getElementById("digit2");
-const boxDigit3 = document.getElementById("digit3");
-const boxDigit4 = document.getElementById("digit4");
-const boxDigit5 = document.getElementById("digit5");
+const boxDigit1 = document.getElementById("digit1")
+const boxDigit2 = document.getElementById("digit2")
+const boxDigit3 = document.getElementById("digit3")
+const boxDigit4 = document.getElementById("digit4")
+const boxDigit5 = document.getElementById("digit5")
 
-const buttonNumber1 = document.getElementById("number1");
-const buttonNumber2 = document.getElementById("number2");
-const buttonNumber3 = document.getElementById("number3");
-const buttonNumber4 = document.getElementById("number4");
-const buttonNumber5 = document.getElementById("number5");
-const buttonNumber6 = document.getElementById("number6");
-const buttonNumber7 = document.getElementById("number7");
-const buttonNumber8 = document.getElementById("number8");
-const buttonNumber9 = document.getElementById("number9");
-const buttonNumber0 = document.getElementById("number0");
+const buttonNumber1 = document.getElementById("number1")
+const buttonNumber2 = document.getElementById("number2")
+const buttonNumber3 = document.getElementById("number3")
+const buttonNumber4 = document.getElementById("number4")
+const buttonNumber5 = document.getElementById("number5")
+const buttonNumber6 = document.getElementById("number6")
+const buttonNumber7 = document.getElementById("number7")
+const buttonNumber8 = document.getElementById("number8")
+const buttonNumber9 = document.getElementById("number9")
+const buttonNumber0 = document.getElementById("number0")
 
-const buttonCommandWhite = document.getElementById("command-white");
-const buttonCommandErase = document.getElementById("command-erase");
-const buttonCommandConfirm = document.getElementById("command-confirm");
+const buttonCommandWhite = document.getElementById("command-white")
+const buttonCommandErase = document.getElementById("command-erase")
+const buttonCommandConfirm = document.getElementById("command-confirm")
+
+
+const divCandidate = document.getElementById("candidate")
+const imgCandidate = document.createElement("img")
+imgCandidate.setAttribute("id", "img-candidate")
+
+const titleParty = document.createElement("h3")
+titleParty.setAttribute("id", "party")
+
+const titleNameCandidate = document.createElement("h4")
+titleNameCandidate.setAttribute("id", "name-candidate")
 
 let posicaoAtual = 0
-let digitos = [undefined, undefined, undefined, undefined, undefined];
+let digitos = [undefined, undefined, undefined, undefined, undefined]
 let voto
 
 function atualizaDigitos() {
@@ -114,62 +127,88 @@ function atualizaDigitos() {
   boxDigit5.textContent = digitos[4]
 }
 
-function buttonPressed(buttonNumber) {
+function mostrarCandidato(candidato) {
+  candidatoValido = candidato
+  imgCandidate.setAttribute("src", `./assets/${candidato.foto}`)
+  titleNameCandidate.textContent = candidato.nome
+  const numeroPartidoCandidato = `${candidato.numero}`.slice(0, 2)
+  const partido = partidos.find((p) => p.numero === Number(numeroPartidoCandidato))
+  titleParty.textContent = partido.nome
+  divCandidate.appendChild(imgCandidate)
+  divCandidate.appendChild(titleNameCandidate)
+  divCandidate.appendChild(titleParty)
+}
+
+function limparCandidato() {
+  divCandidate.removeChild(imgCandidate)
+  divCandidate.removeChild(titleNameCandidate)
+  divCandidate.removeChild(titleParty)
+}
+
+function buttonDigitPressed(buttonNumber) {
   if (posicaoAtual >= 0 && posicaoAtual < 5) {
     digitos[posicaoAtual] = buttonNumber
     posicaoAtual += 1
     atualizaDigitos()
   }
+   // se a posicao atual for maior ou igual a 5 
+  // vai procurar o candidato na lista de candidatos e mostrar seus dados
+  if (posicaoAtual == 5) {
+    const numeroDigitado = digitos.join("")
+    const candidatoExiste = candidatos.find((candidato) => candidato.numero == numeroDigitado)
+    if (!candidatoExiste) return
+    mostrarCandidato(candidatoExiste)
+  }
 }
 
 buttonNumber1.addEventListener("click", (event) => {
   event.preventDefault()
-  buttonPressed(1)
+  buttonDigitPressed(1)
 })
 
 buttonNumber2.addEventListener("click", (event) => {
   event.preventDefault()
-  buttonPressed(2)
+  buttonDigitPressed(2)
 })
 
 buttonNumber3.addEventListener("click", (event) => {
   event.preventDefault()
-  buttonPressed(3)
+  buttonDigitPressed(3)
 })
 
 buttonNumber4.addEventListener("click", (event) => {
   event.preventDefault()
-  buttonPressed(4)
+  buttonDigitPressed(4)
 })
 
 buttonNumber5.addEventListener("click", (event) => {
   event.preventDefault()
-  buttonPressed(5)
+  buttonDigitPressed(5)
 })
 
 buttonNumber6.addEventListener("click", (event) => {
   event.preventDefault()
-  buttonPressed(6)
+  buttonDigitPressed(6)
 })
 
 buttonNumber7.addEventListener("click", (event) => {
   event.preventDefault()
-  buttonPressed(7)
+  buttonDigitPressed(7)
 })
 
 buttonNumber8.addEventListener("click", (event) => {
   event.preventDefault()
-  buttonPressed(8)
+  buttonDigitPressed(8)
 })
 
 buttonNumber9.addEventListener("click", (event) => {
   event.preventDefault()
-  buttonPressed(9)
+  buttonDigitPressed(9)
 })
 
 buttonNumber0.addEventListener("click", (event) => {
   event.preventDefault()
-  buttonPressed(0)
+  buttonDigitPressed(0)
 })
 
 // Para cada número, preciso saber qual a posição atual do digito e preencher com ele
@@ -209,6 +248,8 @@ buttonCommandErase.addEventListener("click", (event) => {
     voto = undefined
   }
 
+  limparCandidato()
+  
   for (let i = 0; i < 5; i++) {
     digitos[i] = undefined
   }
